@@ -8,7 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Made all external ports configurable in the `.env` file. `compose.yaml` now loads these values and passes them on to the containers in environment variables as well.
+
 ### Changed
+
+- Switched the PHP image to 8.5.
+- Switched to MariaDB 12.1.
+- Dashboard: Switched from Twig to Latte 3.1.1
+- Changed the database privilege script to automatically grant permissions to the user in the `.env` file.
+- Changed default database username in `.env`.
+
 ### Deprecated
 ### Removed
 ### Fixed

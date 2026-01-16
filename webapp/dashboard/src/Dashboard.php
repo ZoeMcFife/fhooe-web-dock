@@ -2,13 +2,10 @@
 
 namespace Fhooe\WebDockDashboard;
 
+use Latte\Engine;
+use Latte\Loaders\FileLoader;
 use PDO;
 use PDOException;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Dashboard class to display the dashboard and query server and php information.
@@ -17,9 +14,9 @@ use Twig\Loader\FilesystemLoader;
 class Dashboard
 {
     /**
-     * @var Environment The Twig template engine.
+     * @var Engine The Latte template engine.
      */
-    private Environment $twig;
+    private Engine $templateEngine;
 
     /**
      * @var string The path to the webapp directory
@@ -29,37 +26,62 @@ class Dashboard
     /**
      * @var string The name of the default database.
      */
-    private const string dbName = "default";
+    private string $dbName;
 
     /**
      * @var string The name of the database user.
      */
-    private const string dbUser = "hypermedia";
+    private string $dbUser;
 
     /**
      * @var string The password of the database user.
      */
-    private const string dbPassword = "geheim";
+    private string $dbPassword;
 
     /**
      * @var string The internal host of the database.
      */
-    private const string dbHostInternal = "db";
+    private string $dbHostInternal;
 
     /**
      * @var string The external host of the database.
      */
-    private const string dbHostExternal = "localhost";
+    private string $dbHostExternal;
 
     /**
      * @var string The internal port of the database.
      */
-    private const string dbPortInternal = "3306";
+    private string $dbPortInternal;
 
     /**
      * @var string The external port of the database.
      */
-    private const string dbPortExternal = "6033";
+    private string $dbPortExternal;
+
+    /**
+     * @var string The hostname of the web server.
+     */
+    private string $hostname;
+
+    /**
+     * @var string The HTTP port of the web server.
+     */
+    private string $webPortHttp;
+
+    /**
+     * @var string The HTTPS port of the web server.
+     */
+    private string $webPortHttps;
+
+    /**
+     * @var string The HTTP port of phpMyAdmin.
+     */
+    private string $pmaPortHttp;
+
+    /**
+     * @var string The HTTPS port of phpMyAdmin.
+     */
+    private string $pmaPortHttps;
 
     /**
      * Creates a new Dashboard instance.
@@ -67,45 +89,67 @@ class Dashboard
      */
     public function __construct(string $webappDirectory = ".")
     {
-        $this->twig = $this->getTemplateEngine();
+        /*$this->twig = $this->getTemplateEngine();*/
+        $this->templateEngine = $this->getTemplateEngine();
         $this->webappDirectory = $webappDirectory;
+
+        $this->dbName = getenv("DB_NAME") ?: "default";
+        $this->dbUser = getenv("DB_USER") ?: "dbuser";
+        $this->dbPassword = getenv("DB_PASSWORD") ?: "geheim";
+        $this->dbHostInternal = getenv("DB_HOST") ?: "db";
+        $this->dbHostExternal = getenv("DB_HOST_EXTERNAL") ?: "localhost";
+        $this->dbPortInternal = getenv("DB_PORT") ?: "3306";
+        $this->dbPortExternal = getenv("DB_PORT_EXTERNAL") ?: "6033";
+        $this->hostname = $_SERVER["SERVER_NAME"] ?? "localhost";
+        $this->webPortHttp = getenv("WEB_PORT_HTTP") ?: "8080";
+        $this->webPortHttps = getenv("WEB_PORT_HTTPS") ?: "7443";
+        $this->pmaPortHttp = getenv("PMA_PORT_HTTP") ?: "8082";
+        $this->pmaPortHttps = getenv("PMA_PORT_HTTPS") ?: "7443";
     }
 
     /**
      * Displays the dashboard.
-     * @throws RuntimeError If the template cannot be rendered.
-     * @throws SyntaxError If an error occurred during compilation.
-     * @throws LoaderError If an error occurred while loading the template.
      */
     public function display(): void
     {
-        $this->twig->display("dashboard.html.twig", [
+        $this->templateEngine->render("dashboard.latte", [
             "url" => $this->getUrl(),
             "directories" => $this->getWebappDirectories(),
             "databaseParameters" => [
-                "name" => self::dbName,
-                "user" => self::dbUser,
-                "password" => self::dbPassword,
-                "hostInternal" => self::dbHostInternal,
-                "portInternal" => self::dbPortInternal,
-                "hostExternal" => self::dbHostExternal,
-                "portExternal" => self::dbPortExternal
+                "name" => $this->dbName,
+                "user" => $this->dbUser,
+                "password" => $this->dbPassword,
+                "hostInternal" => $this->dbHostInternal,
+                "portInternal" => $this->dbPortInternal,
+                "hostExternal" => $this->dbHostExternal,
+                "portExternal" => $this->dbPortExternal,
+            ],
+            "webserverParameters" => [
+                "hostname" => $this->hostname,
+                "portHttp" => $this->webPortHttp,
+                "portHttps" => $this->webPortHttps,
+            ],
+            "pmaParameters" => [
+                "portHttp" => $this->pmaPortHttp,
+                "portHttps" => $this->pmaPortHttps,
             ],
             "webserverVersion" => $this->getServerVersion(),
             "phpVersion" => $this->getPhpVersion(),
             "debuggerVersion" => $this->getDebuggerVersion(),
-            "databaseVersion" => $this->getDatabaseVersion()
+            "databaseVersion" => $this->getDatabaseVersion(),
         ]);
     }
 
     /**
-     * Returns the Twig template engine.
-     * @return Environment The Twig template engine.
+     * Returns the template engine.
+     * @return Engine The Latte template engine.
      */
-    private function getTemplateEngine(): Environment
+    private function getTemplateEngine(): Engine
     {
-        $loader = new FilesystemLoader("dashboard/views");
-        return new Environment($loader);
+        $latte = new Engine();
+        $latte->setLoader(new FileLoader(__DIR__ . "/../views"));
+        $latte->setTempDirectory(sys_get_temp_dir());
+        return $latte;
     }
 
     /**
@@ -199,17 +243,17 @@ class Dashboard
     private function getDatabaseVersion(): string
     {
         $charsetAttr = "SET NAMES utf8 COLLATE utf8_general_ci";
-        $dsn = "mysql:host=" . self::dbHostInternal . ";dbname=" . self::dbName . ";port=" . self::dbPortInternal;
+        $dsn = "mysql:host=" . $this->dbHostInternal . ";dbname=" . $this->dbName . ";port=" . $this->dbPortInternal;
         $options = [
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-            PDO::MYSQL_ATTR_INIT_COMMAND => $charsetAttr,
-            PDO::MYSQL_ATTR_MULTI_STATEMENTS => false
+            Pdo\Mysql::ATTR_INIT_COMMAND => $charsetAttr,
+            Pdo\Mysql::ATTR_MULTI_STATEMENTS => false,
         ];
 
         try {
-            $pdo = new PDO($dsn, self::dbUser, self::dbPassword, $options);
+            $pdo = new PDO($dsn, $this->dbUser, $this->dbPassword, $options);
 
             // Get the version of the database server
             $version = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
