@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Made all external ports configurable in the `.env` file. `compose.yaml` now loads these values and passes them on to the containers in environment variables as well.
+- Added a check to the `CleanReinstall` scripts to ask if the database volume should be preserved.
 
 ### Changed
 
