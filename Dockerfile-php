@@ -15,16 +15,32 @@ LABEL maintainer="Hochleitner, Wolfgang <wolfgang.hochleitner@fh-hagenberg.at>" 
 COPY src /src
 
 # Install additional packages and run initialization scripts
-RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini" \
+# RUN --mount provides PIE for xdebug install without adding it to the image
+RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
+    mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini" \
     && apt-get update \
-    && apt-get install -y --no-install-recommends libicu-dev \
+    && apt-get install -y --no-install-recommends curl \
+                                                  gettext \
+                                                  git \
+                                                  iputils-ping \
+                                                  less \
                                                   libfreetype6-dev \
+                                                  libicu-dev \
                                                   libjpeg62-turbo-dev \
                                                   libpng-dev \
                                                   libpq-dev \
                                                   locales \
                                                   locales-all \
-                                                  gettext \
+                                                  man-db \
+                                                  nano \
+                                                  net-tools \
+                                                  openssl \
+                                                  psmisc \
+                                                  telnet \
+                                                  unzip \
+                                                  vim \
+                                                  wget \
+                                                  zip \
     && docker-php-ext-configure pgsql --with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql \
     && docker-php-ext-install pdo_mysql \
@@ -33,9 +49,8 @@ RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini" \
     && docker-php-ext-install gettext \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" gd \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
     && chmod 755 -- /src/*.sh \
+    && pie install xdebug/xdebug \
     && /src/install-cli-tools.sh \
     && /src/install-php-tools.sh \
     && /src/configure-apache.sh \

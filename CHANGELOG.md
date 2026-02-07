@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Switched the PHP image to 8.5.
-- Switched to MariaDB 12.1.
+- Switched from PECL to [PIE](https://github.com/php/pie) (PHP Installer for Extensions) for installing Xdebug.
+- Moved all apt-get installable packages from `install-cli-tools.sh` into `Dockerfile-php`.
 - Dashboard: Switched from Twig to Latte 3.1.1
 - Changed the database privilege script to automatically grant permissions to the user in the `.env` file.
 - Changed default database username in `.env`.

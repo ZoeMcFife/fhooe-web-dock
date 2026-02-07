@@ -32,6 +32,7 @@ chown root:root /usr/local/bin/phpcs /usr/local/bin/phpcbf
 chmod 755 /usr/local/bin/phpcs /usr/local/bin/phpcbf
 
 echo "## Creating xdebug.ini ##"
+# PIE creates docker-php-ext-xdebug.ini with zend_extension=xdebug; we append our config
 tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini <<EOF
 
 [xdebug]
