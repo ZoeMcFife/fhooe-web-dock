@@ -58,7 +58,7 @@ docker compose start
 
 ### Rebuilding the Containers
 
-Should your containers malfunction or you want to rebuild them from the latest official images (due to new versions), you can use the provided `CleanInstall` script.
+Should your containers malfunction or you want to rebuild them from the latest official images (due to new versions), you can use the provided `CleanReinstall` script.
 
 - Windows: Double-click `CleanReinstall.bat` or run the command in a PowerShell/command prompt.
 - macOS/Linux: Run `./CleanReinstall.sh` from a terminal/shell. If the file is not executable, run `chmod +x CleanReinstall.sh` first.
@@ -67,11 +67,12 @@ This script does the following:
 
 1. Stop all running *fhooe-web-dock* containers (`docker compose stop`).
 2. Ask for permission to remove the *fhooe-web-dock* containers and images.
-3. If permisssion is granted, remove images, containers, networks, and volumes (`docker compose down --rmi all --volumes --remove-orphans`).
-4. Removes any other dangling images belonging to *fhooe-web-dock* (`docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"`).
-5. Update *fhooe-web-dock* from GitHub (`git pull`).
-6. Build the images from scratch, ignoring cached layers (`docker compose build --no-cache`).
-7. Create and start the containers again (`docker compose up -d`).
+3. Ask whether the database volume should be preserved. If you choose to keep it, your database data will be restored after the rebuild. If you choose to delete it, you will get a completely fresh installation.
+4. If permission is granted, remove images, containers, networks, and optionally volumes (`docker compose down --rmi all [--volumes] --remove-orphans`).
+5. Remove any other dangling images belonging to *fhooe-web-dock* (`docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"`).
+6. Update *fhooe-web-dock* from GitHub (`git pull`).
+7. Build the images from scratch, ignoring cached layers (`docker compose build --no-cache`).
+8. Create and start the containers again (`docker compose up -d`).
 
 ## Working With the Containers
 

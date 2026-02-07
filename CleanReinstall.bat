@@ -1,9 +1,12 @@
 @echo off
+REM Ensure we only affect fhooe-web-dock resources (project name from compose.yaml)
+set COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo Stopping all running fhooe-web-dock containers
 docker compose stop
 
-echo These containers will be deleted together with their volumes and images and afterwards recreated:
+echo These containers will be deleted and recreated. You will be asked whether to preserve the database volume.
+echo.
 docker compose ps -a
 
 :prompt
@@ -19,8 +22,33 @@ echo Please answer Y or n to continue.
 goto prompt
 
 :proceed
-echo Remove containers, images, and volumes associated with this compose file
+echo.
+echo Y = Keep database volume (tables and data will be preserved after rebuild)
+echo n = Delete everything (full reinstall with empty database)
+echo.
+:dbprompt
+set "dbanswer="
+set /p "dbanswer=Should the database data be preserved? [Y/n] "
+if "%dbanswer%"=="" set dbanswer=Y
+
+if /i "%dbanswer%"=="Y" goto keepdb
+if /i "%dbanswer%"=="y" goto keepdb
+if /i "%dbanswer%"=="N" goto removedb
+if /i "%dbanswer%"=="n" goto removedb
+
+echo Please answer Y or n.
+goto dbprompt
+
+:keepdb
+echo Database volume will be preserved. Containers and images will be removed.
+docker compose down --rmi all --remove-orphans
+goto afterdown
+
+:removedb
+echo All data will be deleted, including the database volume.
 docker compose down --rmi all --volumes --remove-orphans
+
+:afterdown
 
 echo Remove any dangling images related to this project
 docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"
