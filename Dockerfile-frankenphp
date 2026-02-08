@@ -1,0 +1,50 @@
+# Experimental: FrankenPHP as alternative to Apache+PHP
+# FrankenPHP is a modern PHP app server built on Caddy (Go)
+# See https://frankenphp.dev/docs/docker/
+# If php8.5 is not available, use 1-php8.4-bookworm
+FROM dunglas/frankenphp:1-php8.5-bookworm
+
+# Add image metadata in Open Container Format (OCF) compliant format
+LABEL maintainer="Hochleitner, Wolfgang <wolfgang.hochleitner@fh-hagenberg.at>" \
+      org.opencontainers.image.authors="Hochleitner, Wolfgang <wolfgang.hochleitner@fh-hagenberg.at>" \
+      org.opencontainers.image.url="https://github.com/Digital-Media/fhooe-web-dock.git" \
+      org.opencontainers.image.vendor="University of Applied Sciences Upper Austria, Department of Digital Media" \
+      org.opencontainers.image.licenses="MIT License" \
+      org.opencontainers.image.ref.name="fhooe-web-dock-frankenphp:latest" \
+      org.opencontainers.image.title="fhooe-web-dock FrankenPHP" \
+      org.opencontainers.image.description="FrankenPHP app server (experimental) for the fhooe-web-dock environment"
+
+# Copy additional initialization scripts to the image
+COPY src /src
+
+# Install PHP extensions (install-php-extensions is provided by the FrankenPHP base image)
+# Note: install-php-extensions cleans apt cache; run apt-get update again before our packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq-dev \
+    && install-php-extensions pdo_mysql pdo_pgsql pgsql intl gd gettext xdebug zip \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+                                                  gettext \
+                                                  git \
+                                                  iputils-ping \
+                                                  less \
+                                                  man-db \
+                                                  nano \
+                                                  net-tools \
+                                                  openssl \
+                                                  psmisc \
+                                                  telnet \
+                                                  unzip \
+                                                  vim \
+                                                  wget \
+                                                  zip \
+    && chmod 755 -- /src/*.sh \
+    && /src/install-cli-tools.sh \
+    && /src/install-php-tools.sh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV LC_ALL=en_US.utf8 \
+    LANG=en_US.utf8 \
+    LANGUAGE=en_US.utf8 \
+    SERVER_NAME=":80"

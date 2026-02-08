@@ -38,9 +38,10 @@ Use a command prompt such as Windows PowerShell or Terminal to enter the Docker 
 docker compose up -d
 ```
 
-This will create three containers:
+This will create four containers:
 
 - `webapp`: Apache web server with PHP functionality.
+- `webapp-frankenphp`: [FrankenPHP](https://frankenphp.dev/) app server (experimental, runs in parallel).
 - `mariadb`: MariaDB database.
 - `pma`: phpMyAdmin for database management.
 
@@ -80,7 +81,8 @@ You'll notice a subdirectory called `webapp` in your *fhooe-web-dock* directory.
 
 You can access the **web server** via HTTP or HTTPS. Be advised the HTTPS certificate is self-signed and will trigger a warning in your browser.
 
-- Web server: http://localhost:8080 (HTTP), https://localhost:7443 (HTTPS). This will show you the dashboard.
+- Web server (Apache): http://localhost:8080 (HTTP), https://localhost:7443 (HTTPS). This will show you the dashboard.
+- Web server (FrankenPHP, experimental): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS).
 - phpMyAdmin: http://localhost:8082 (HTTP), https://localhost:8443 (HTTPS)
 
 To access the **database**, you must differentiate between access from your host system (external) or one of the other containers (internal).
@@ -94,7 +96,7 @@ For **shell access** to your containers (in this case, the `webapp` container), 
 docker exec -it webapp /bin/bash
 ```
 
-To access the other containers, replace the container name `webapp` with `mariadb` (database) or `pma` (phpMyAdmin).
+To access the other containers, replace the container name `webapp` with `webapp-frankenphp`, `mariadb` (database), or `pma` (phpMyAdmin).
 
 ### Permissions Inside the `webapp` Directory
 

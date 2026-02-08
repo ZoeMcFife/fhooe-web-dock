@@ -47,6 +47,32 @@ services:
       - "127.0.0.1:${WEB_PORT_HTTPS:-7443}:443"
     restart: always
     hostname: webapp
+  # FrankenPHP (experimental): Modern PHP app server based on Caddy
+  # Runs in parallel to php-apache; use http://localhost:8081 or https://localhost:7444
+  frankenphp:
+    build:
+      dockerfile: Dockerfile-frankenphp
+    container_name: webapp-frankenphp
+    depends_on:
+      - db
+    volumes:
+      - ./webapp:/app/public
+    environment:
+      DB_HOST: db
+      DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
+      DB_PORT: 3306
+      DB_PORT_EXTERNAL: ${DB_PORT_EXTERNAL:-6033}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      SERVER_NAME: ":80"
+    ports:
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTP:-8081}:80"
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTPS:-7444}:443"
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTPS:-7444}:443/udp"
+    restart: always
+    hostname: webapp-frankenphp
+    tty: true
   # phpMyAdmin Service
   phpmyadmin:
     build:
