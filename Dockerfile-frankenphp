@@ -1,8 +1,8 @@
 # Experimental: FrankenPHP as alternative to Apache+PHP
 # FrankenPHP is a modern PHP app server built on Caddy (Go)
 # See https://frankenphp.dev/docs/docker/
-# If php8.5 is not available, use 1-php8.4-bookworm
-FROM dunglas/frankenphp:1-php8.5-bookworm
+# 1-php8.5: floating tag for latest FrankenPHP 1.x with PHP 8.5 and current Debian
+FROM dunglas/frankenphp:1-php8.5
 
 # Add image metadata in Open Container Format (OCF) compliant format
 LABEL maintainer="Hochleitner, Wolfgang <wolfgang.hochleitner@fh-hagenberg.at>" \
