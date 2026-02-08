@@ -211,11 +211,25 @@ class Dashboard
 
     /**
      * Returns the server version.
+     * Supports Apache (apache_get_version) and FrankenPHP/Caddy.
      * @return string The server version.
      */
     private function getServerVersion(): string
     {
-        return apache_get_version();
+        if (function_exists('apache_get_version')) {
+            return apache_get_version();
+        }
+        // FrankenPHP: try to get version from binary (shell_exec may be disabled)
+        if (function_exists('shell_exec')) {
+            $version = trim((string) @shell_exec('frankenphp --version 2>/dev/null'));
+            if ($version !== '' && preg_match('/FrankenPHP (v\d+\.\d+\.\d+).*?Caddy (v\d+\.\d+\.\d+)/', $version, $matches)) {
+                return "FrankenPHP {$matches[1]} using Caddy {$matches[2]}";
+            }
+            if ($version !== '') {
+                return $version;
+            }
+        }
+        return $_SERVER['SERVER_SOFTWARE'] ?? 'FrankenPHP';
     }
 
     /**
