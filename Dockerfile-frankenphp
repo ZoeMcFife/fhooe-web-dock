@@ -39,6 +39,7 @@ RUN apt-get update \
                                                   wget \
                                                   zip \
     && chmod 755 -- /src/*.sh \
+    && /src/configure-caddy.sh \
     && /src/install-cli-tools.sh \
     && /src/install-php-tools.sh \
     && rm -rf /var/lib/apt/lists/*

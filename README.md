@@ -82,7 +82,7 @@ You'll notice a subdirectory called `webapp` in your *fhooe-web-dock* directory.
 You can access the **web server** via HTTP or HTTPS. Be advised the HTTPS certificate is self-signed and will trigger a warning in your browser.
 
 - Web server (Apache): http://localhost:8080 (HTTP), https://localhost:7443 (HTTPS). This will show you the dashboard.
-- Web server (FrankenPHP, experimental): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS).
+- Web server (FrankenPHP, experimental): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS). The Caddyfile is generated inside the image by `src/configure-caddy.sh` at build time (no volume). It implements multi-project routing: each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; directory listing is shown for folders without an index file.
 - phpMyAdmin: http://localhost:8082 (HTTP), https://localhost:8443 (HTTPS)
 
 To access the **database**, you must differentiate between access from your host system (external) or one of the other containers (internal).

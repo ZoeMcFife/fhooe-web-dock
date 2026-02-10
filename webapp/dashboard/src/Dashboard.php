@@ -101,8 +101,14 @@ class Dashboard
         $this->dbPortInternal = getenv("DB_PORT") ?: "3306";
         $this->dbPortExternal = getenv("DB_PORT_EXTERNAL") ?: "6033";
         $this->hostname = $_SERVER["SERVER_NAME"] ?? "localhost";
-        $this->webPortHttp = getenv("WEB_PORT_HTTP") ?: "8080";
-        $this->webPortHttps = getenv("WEB_PORT_HTTPS") ?: "7443";
+        // FrankenPHP uses different ports; detect via missing apache_get_version
+        if (function_exists('apache_get_version')) {
+            $this->webPortHttp = getenv("WEB_PORT_HTTP") ?: "8080";
+            $this->webPortHttps = getenv("WEB_PORT_HTTPS") ?: "7443";
+        } else {
+            $this->webPortHttp = getenv("FRANKENPHP_WEB_PORT_HTTP") ?: "8081";
+            $this->webPortHttps = getenv("FRANKENPHP_WEB_PORT_HTTPS") ?: "7444";
+        }
         $this->pmaPortHttp = getenv("PMA_PORT_HTTP") ?: "8082";
         $this->pmaPortHttps = getenv("PMA_PORT_HTTPS") ?: "7443";
     }
