@@ -50,6 +50,8 @@ services:
   # FrankenPHP (experimental): Modern PHP app server based on Caddy
   # Runs in parallel to php-apache; use http://localhost:8081 or https://localhost:7444
   frankenphp:
+    profiles:
+      - experimental
     build:
       dockerfile: Dockerfile-frankenphp
     container_name: webapp-frankenphp

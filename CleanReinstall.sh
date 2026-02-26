@@ -1,5 +1,4 @@
 #!/bin/bash
-# Ensure we only affect fhooe-web-dock resources (project name from compose.yaml)
 export COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo "Stopping all running fhooe-web-dock containers"
@@ -11,22 +10,21 @@ docker compose ps -a
 
 while true; do
     read -p "Continue? [Y/n] " -r answer
-    answer=${answer:-Y}  # Set default value to Y if no input is provided
+    answer=${answer:-Y}
 
     case $answer in
         [Yy]* ) 
-            break;;  # Proceed if the answer is Y or y
+            break;;
         [Nn]* ) 
             echo "Containers, images and volumes are not removed. Keeping the current versions and restarting..."
             docker compose start
             read -p "Press any key to exit ..."
             exit 1;;
         * ) 
-            echo "Please answer Y or n to continue.";;  # Ask again for any other input
+            echo "Please answer Y or n to continue.";;
     esac
 done
 
-# Ask whether to preserve database volume
 echo ""
 echo "Y = Keep database volume (tables and data will be preserved after rebuild)"
 echo "n = Delete everything (full reinstall with empty database)"
@@ -49,17 +47,36 @@ while true; do
     esac
 done
 
+echo ""
+echo "=============================================="
+echo "EXPERIMENTAL FEATURES"
+echo "=============================================="
+read -p "Install experimental features (FrankenPHP)? [y/N] " -r expanswer
+expanswer=${expanswer:-N}
+PROFILE_ARG=""
+
+case $expanswer in
+    [Yy]* )
+        echo "Experimental features enabled."
+        PROFILE_ARG="--profile experimental"
+        ;;
+    * )
+        echo "Experimental features disabled."
+        ;;
+esac
+echo ""
+
 echo "Remove any dangling images related to this project"
-docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"
+docker image prune --force --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME"
 
 echo "Update fhooe-web-dock from GitHub"
 git pull
 
 echo "Build the images from scratch"
-docker compose build --no-cache
+docker compose $PROFILE_ARG build --no-cache
 
 echo "Create and start the containers in the background (detached)"
-docker compose up --detach
+docker compose $PROFILE_ARG up --detach
 
 echo "All finished. Enjoy your updated version of fhooe-web-dock!"
 read -p "Press any key to exit ..."
