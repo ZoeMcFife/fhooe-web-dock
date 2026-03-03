@@ -89,7 +89,6 @@ class Dashboard
      */
     public function __construct(string $webappDirectory = ".")
     {
-        /*$this->twig = $this->getTemplateEngine();*/
         $this->templateEngine = $this->getTemplateEngine();
         $this->webappDirectory = $webappDirectory;
 
@@ -101,8 +100,7 @@ class Dashboard
         $this->dbPortInternal = getenv("DB_PORT") ?: "3306";
         $this->dbPortExternal = getenv("DB_PORT_EXTERNAL") ?: "6033";
         $this->hostname = $_SERVER["SERVER_NAME"] ?? "localhost";
-        // FrankenPHP uses different ports; detect via missing apache_get_version
-        if (function_exists('apache_get_version')) {
+        if (!$this->isFrankenPhp()) {
             $this->webPortHttp = getenv("WEB_PORT_HTTP") ?: "8080";
             $this->webPortHttps = getenv("WEB_PORT_HTTPS") ?: "7443";
         } else {
@@ -121,6 +119,8 @@ class Dashboard
         $this->templateEngine->render("dashboard.latte", [
             "url" => $this->getUrl(),
             "directories" => $this->getWebappDirectories(),
+            "containerDescriptions" => $this->getContainerDescriptions(),
+            "currentWebContainerName" => $this->getCurrentWebContainerName(),
             "databaseParameters" => [
                 "name" => $this->dbName,
                 "user" => $this->dbUser,
@@ -216,6 +216,58 @@ class Dashboard
     }
 
     /**
+     * Returns whether the current request is served by FrankenPHP (true) or Apache (false).
+     * @return bool True if FrankenPHP/Caddy, false if Apache.
+     */
+    public function isFrankenPhp(): bool
+    {
+        return !function_exists("apache_get_version");
+    }
+
+    /**
+     * Returns the container name for the current web server (webapp or webapp-frankenphp).
+     * @return string The container name.
+     */
+    public function getCurrentWebContainerName(): string
+    {
+        return $this->isFrankenPhp() ? "webapp-frankenphp" : "webapp";
+    }
+
+    /**
+     * Returns a short description of the current web server for the dashboard sidebar.
+     * @return string The description (e.g. "Apache web server with PHP." or "Caddy web server with FrankenPHP.").
+     */
+    public function getCurrentWebContainerDescription(): string
+    {
+        return $this->isFrankenPhp()
+            ? "Caddy web server with FrankenPHP."
+            : "Apache web server with PHP.";
+    }
+
+    /**
+     * Returns the list of Docker container names and descriptions for the "Useful Information" sidebar.
+     * The first entry (web server) depends on whether the dashboard is served by Apache or FrankenPHP.
+     * @return array<int, array{name: string, description: string}> List of ["name" => string, "description" => string].
+     */
+    public function getContainerDescriptions(): array
+    {
+        return [
+            [
+                "name" => $this->getCurrentWebContainerName(),
+                "description" => $this->getCurrentWebContainerDescription(),
+            ],
+            [
+                "name" => "mariadb",
+                "description" => "MariaDB database.",
+            ],
+            [
+                "name" => "pma",
+                "description" => "phpMyAdmin for database management.",
+            ],
+        ];
+    }
+
+    /**
      * Returns the server version.
      * Supports Apache (apache_get_version) and FrankenPHP/Caddy.
      * @return string The server version.
@@ -227,9 +279,13 @@ class Dashboard
         }
         // FrankenPHP: try to get version from binary (shell_exec may be disabled)
         if (function_exists('shell_exec')) {
-            $version = trim((string) @shell_exec('frankenphp --version 2>/dev/null'));
-            if ($version !== '' && preg_match('/FrankenPHP (v\d+\.\d+\.\d+).*?Caddy (v\d+\.\d+\.\d+)/', $version, $matches)) {
-                return "FrankenPHP {$matches[1]} using Caddy {$matches[2]}";
+            $version = trim((string)@shell_exec('frankenphp --version 2>/dev/null'));
+            if ($version !== '' && preg_match(
+                    '/FrankenPHP (v\d+\.\d+\.\d+).*?Caddy (v\d+\.\d+\.\d+)/',
+                    $version,
+                    $matches,
+                )) {
+                return "FrankenPHP $matches[1] using Caddy $matches[2]";
             }
             if ($version !== '') {
                 return $version;

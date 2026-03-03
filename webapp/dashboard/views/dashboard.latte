@@ -128,14 +128,14 @@
                             <div class="accordion-body">
                                 <h5>Docker Containers</h5>
                                 <ul>
-                                    <li><code>webapp</code>: Apache web server with PHP.</li>
-                                    <li><code>mariadb</code>: MariaDB database.</li>
-                                    <li><code>pma</code>: phpMyAdmin for database management.</li>
+                                    {foreach $containerDescriptions as $c}
+                                        <li><code>{$c[name]}</code>: {$c[description]}</li>
+                                    {/foreach}
                                 </ul>
                                 <h5>Shell Access</h5>
-                                <p>To access the <code>webapp</code> container, open a command prompt, terminal or
+                                <p>To access the <code>{$currentWebContainerName}</code> container, open a command prompt, terminal or
                                     Powershell and type<br>
-                                    <code class="user-select-all">docker exec -it webapp /bin/bash</code>.
+                                    <code class="user-select-all">docker exec -it {$currentWebContainerName} /bin/bash</code>.
                                 </p>
                                 <h5>Database Access</h5>
                                 <p>Use the following credentials to connect to the default database. Use the internal
