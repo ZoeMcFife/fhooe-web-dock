@@ -21,7 +21,13 @@
         "ext-pdo": "*",
         "latte/latte": "^3.1"
     },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1"
+    },
     "minimum-stability": "stable",
+    "scripts": {
+        "phpstan": "phpstan analyse -c phpstan.neon.dist"
+    },
     "autoload": {
         "psr-4": {
             "Fhooe\\WebDockDashboard\\": "src/"

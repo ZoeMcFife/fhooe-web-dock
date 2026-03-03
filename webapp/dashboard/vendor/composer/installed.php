@@ -7,7 +7,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => true,
+        'dev' => false,
     ),
     'versions' => array(
         'fhooe/web-dock-dashboard' => array(
@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'latte/latte' => array(
-            'pretty_version' => 'v3.1.1',
-            'version' => '3.1.1.0',
-            'reference' => 'cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3',
+            'pretty_version' => 'v3.1.2',
+            'version' => '3.1.2.0',
+            'reference' => '734ab908c17b28bd75b9331debd1901bec2f23ef',
             'type' => 'library',
             'install_path' => __DIR__ . '/../latte/latte',
             'aliases' => array(),

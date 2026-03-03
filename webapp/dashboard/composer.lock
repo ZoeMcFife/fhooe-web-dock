@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecb80ad406de4b73e2363907d5a7f29f",
+    "content-hash": "9eced1e2128f9dbbf95cc454c475bb1e",
     "packages": [
         {
             "name": "latte/latte",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3"
+                "reference": "734ab908c17b28bd75b9331debd1901bec2f23ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3",
-                "reference": "cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3",
+                "url": "https://api.github.com/repos/nette/latte/zipball/734ab908c17b28bd75b9331debd1901bec2f23ef",
+                "reference": "734ab908c17b28bd75b9331debd1901bec2f23ef",
                 "shasum": ""
             },
             "require": {
@@ -31,9 +31,11 @@
             },
             "require-dev": {
                 "nette/php-generator": "^4.0",
-                "nette/tester": "^2.5",
+                "nette/phpstan-rules": "^1.0",
+                "nette/tester": "^2.6",
                 "nette/utils": "^4.0",
-                "phpstan/phpstan-nette": "^2.0@stable",
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1@stable",
                 "tracy/tracy": "^2.10"
             },
             "suggest": {
@@ -91,12 +93,66 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/latte/issues",
-                "source": "https://github.com/nette/latte/tree/v3.1.1"
+                "source": "https://github.com/nette/latte/tree/v3.1.2"
             },
-            "time": "2025-12-18T22:30:40+00:00"
+            "time": "2026-02-24T21:38:20+00:00"
         }
     ],
-    "packages-dev": [],
+    "packages-dev": [
+        {
+            "name": "phpstan/phpstan",
+            "version": "2.1.40",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9b2c7aeb83a75d8680ea5e7c9b7fca88052b766b",
+                "reference": "9b2c7aeb83a75d8680ea5e7c9b7fca88052b766b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "keywords": [
+                "dev",
+                "static analysis"
+            ],
+            "support": {
+                "docs": "https://phpstan.org/user-guide/getting-started",
+                "forum": "https://github.com/phpstan/phpstan/discussions",
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "security": "https://github.com/phpstan/phpstan/security/policy",
+                "source": "https://github.com/phpstan/phpstan-src"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-23T15:04:35+00:00"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {},

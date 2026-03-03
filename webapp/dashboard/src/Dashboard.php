@@ -99,7 +99,8 @@ class Dashboard
         $this->dbHostExternal = getenv("DB_HOST_EXTERNAL") ?: "localhost";
         $this->dbPortInternal = getenv("DB_PORT") ?: "3306";
         $this->dbPortExternal = getenv("DB_PORT_EXTERNAL") ?: "6033";
-        $this->hostname = $_SERVER["SERVER_NAME"] ?? "localhost";
+        $serverName = $_SERVER["SERVER_NAME"] ?? "localhost";
+        $this->hostname = is_string($serverName) ? $serverName : "localhost";
         if (!$this->isFrankenPhp()) {
             $this->webPortHttp = getenv("WEB_PORT_HTTP") ?: "8080";
             $this->webPortHttps = getenv("WEB_PORT_HTTPS") ?: "7443";
@@ -154,15 +155,15 @@ class Dashboard
     {
         $latte = new Engine();
         $latte->setLoader(new FileLoader(__DIR__ . "/../views"));
-        $latte->setTempDirectory(sys_get_temp_dir());
+        $latte->setCacheDirectory(sys_get_temp_dir());
         return $latte;
     }
 
     /**
      * Scan a directory and return all entries. Filters out . and .. per default.
      * @param string $directory The directory to scan.
-     * @param array $filteredDirectories Directories to filter out (. and .. per default).
-     * @return array The entries of the directory.
+     * @param array<string> $filteredDirectories Directories to filter out (. and .. per default).
+     * @return array<string> The entries of the directory.
      */
     private function scanDirectory(string $directory, array $filteredDirectories = ['.', '..']): array
     {
@@ -183,7 +184,8 @@ class Dashboard
      */
     private function getServerHost(): string
     {
-        return $_SERVER["HTTP_HOST"];
+        $host = $_SERVER["HTTP_HOST"] ?? "localhost";
+        return is_string($host) ? $host : "localhost";
     }
 
     /**
@@ -208,7 +210,7 @@ class Dashboard
 
     /**
      * Returns all subdirectories in the webapp directory. Filters out some common unwanted directories.
-     * @return array All directories in the webapp directory.
+     * @return array<string> All directories in the webapp directory.
      */
     private function getWebappDirectories(): array
     {
@@ -275,7 +277,8 @@ class Dashboard
     private function getServerVersion(): string
     {
         if (function_exists('apache_get_version')) {
-            return apache_get_version();
+            $version = apache_get_version();
+            return $version !== false ? $version : 'Apache (version unknown)';
         }
         // FrankenPHP: try to get version from binary (shell_exec may be disabled)
         if (function_exists('shell_exec')) {
@@ -291,7 +294,8 @@ class Dashboard
                 return $version;
             }
         }
-        return $_SERVER['SERVER_SOFTWARE'] ?? 'FrankenPHP';
+        $software = $_SERVER['SERVER_SOFTWARE'] ?? 'FrankenPHP';
+        return is_string($software) ? $software : 'FrankenPHP';
     }
 
     /**
@@ -333,14 +337,15 @@ class Dashboard
 
             // Get the version of the database server
             $version = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
+            $versionString = is_string($version) ? $version : '';
 
             // This results in something like "11.2.2-MariaDB-1:11.2.2+maria~ubu2204"
             // We only want the version number, so we use a regular expression to extract it
-            if (preg_match('/\d+\.\d+\.\d+/', $version, $matches)) {
-                $version = $matches[0];
+            if (preg_match('/\d+\.\d+\.\d+/', $versionString, $matches)) {
+                $versionString = $matches[0];
             }
 
-            return "MariaDB " . $version;
+            return "MariaDB " . $versionString;
         } catch (PDOException) {
             return "MariaDB version not available. Check the connection to the database container.";
         }
