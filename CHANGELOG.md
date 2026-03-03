@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Experimental [FrankenPHP](https://frankenphp.dev/) support as an alternative web server. Runs in parallel to Apache on ports 8081 (HTTP) and 7444 (HTTPS).
+- Experimental [FrankenPHP](https://frankenphp.dev/) support as an alternative web server. Runs in parallel to Apache on ports 8081 (HTTP) and 7444 (HTTPS) when the containers are created with `docker compose up -d`
 - FrankenPHP: Multi-project routing so that each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; virtual routes and static files work without per-project config.
 - FrankenPHP: Directory listing for directories that exist but have no `index.php` (no greedy `php_server` fallback for those).
 - FrankenPHP: Caddyfile is generated inside the image by `src/configure-caddy.sh` at build time (no `Caddyfile` in the repo and no Caddyfile volume).
@@ -20,12 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - FrankenPHP: Dashboard uses the correct ports (8081/7444) and directory links with a trailing slash.
 - PHP image updated to 8.5.
+- MariaDB image updated to 12.2.
 - Xdebug is installed via [PIE](https://github.com/php/pie) (PHP Installer for Extensions) instead of PECL.
 - All apt-get installable packages from `install-cli-tools.sh` were moved into `Dockerfile-php`.
-- Dashboard: Switched from Twig to Latte 3.1.1.
+- Dashboard: Switched from Twig to Latte 3.1.2.
+- Dashboard: Can now correctly detect if run on Apache or Caddy/FrankenPHP.
 - Database privilege script now grants permissions to the user defined in `.env` automatically.
 - Default database username changed in `.env`.
-- FrankenPHP: Comments in `configure-caddy.sh` and the embedded Caddyfile are in English; README and CHANGELOG updated to match the current setup.
 
 ### Deprecated
 ### Removed
