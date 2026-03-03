@@ -2,7 +2,7 @@
 
 This repository provides a Docker environment for web development designed for use in web development classes at the [Upper Austria University of Applied Sciences (FH Oberösterreich), Hagenberg Campus](https://fh-ooe.at/en/campus-hagenberg).
 
-This collection of Dockerfiles is based on the official Docker images for [PHP](https://hub.docker.com/_/php/) 8.5, [MariaDB](https://hub.docker.com/_/mariadb) 12.1, and [phpMyAdmin](https://hub.docker.com/_/phpmyadmin) 5.2, as well as additional configuration and scripts.
+This collection of Dockerfiles is based on the official Docker images for [PHP](https://hub.docker.com/_/php/) 8.5, [MariaDB](https://hub.docker.com/_/mariadb) 12.2, and [phpMyAdmin](https://hub.docker.com/_/phpmyadmin) 5.2, along with additional configuration and scripts.
 
 Do you need to familiarize yourself with Docker containers, or are you wondering why you should use them? Have a look at the [Introduction](https://www.docker.com/resources/what-container/) first.
 
@@ -38,12 +38,23 @@ Use a command prompt such as Windows PowerShell or Terminal to enter the Docker 
 docker compose up -d
 ```
 
-This will create four containers:
+This creates **three containers** by default:
 
 - `webapp`: Apache web server with PHP functionality.
-- `webapp-frankenphp`: [FrankenPHP](https://frankenphp.dev/) app server (experimental, runs in parallel).
 - `mariadb`: MariaDB database.
 - `pma`: phpMyAdmin for database management.
+
+#### Optional: FrankenPHP (experimental)
+
+An optional fourth container provides [FrankenPHP](https://frankenphp.dev/) as an alternative PHP app server (Caddy-based), for use in parallel with Apache. It is **experimental** and not required for normal use. To start it, use the `experimental` profile:
+
+```shell
+docker compose --profile experimental up -d
+```
+
+When the profile is enabled, a fourth container will be created:
+
+- `webapp-frankenphp`: FrankenPHP app server running on a Caddy web server.
 
 ### Stopping the Containers
 
@@ -73,7 +84,7 @@ This script does the following:
 5. Remove any other dangling images belonging to *fhooe-web-dock* (`docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"`).
 6. Update *fhooe-web-dock* from GitHub (`git pull`).
 7. Build the images from scratch, ignoring cached layers (`docker compose build --no-cache`).
-8. Create and start the containers again (`docker compose up -d`).
+8. Create and start the containers again (`docker compose up -d`). If FrankenPHP (experimental) is chosen, add `--profile experimental` to that command.
 
 ## Working With the Containers
 
@@ -82,7 +93,7 @@ You'll notice a subdirectory called `webapp` in your *fhooe-web-dock* directory.
 You can access the **web server** via HTTP or HTTPS. Be advised the HTTPS certificate is self-signed and will trigger a warning in your browser.
 
 - Web server (Apache): http://localhost:8080 (HTTP), https://localhost:7443 (HTTPS). This will show you the dashboard.
-- Web server (FrankenPHP, experimental): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS). The Caddyfile is generated inside the image by `src/configure-caddy.sh` at build time (no volume). It implements multi-project routing: each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; directory listing is shown for folders without an index file.
+- Web server (FrankenPHP, optional): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS). Only available if you started the stack with `--profile experimental` (see above).
 - phpMyAdmin: http://localhost:8082 (HTTP), https://localhost:8443 (HTTPS)
 
 To access the **database**, you must differentiate between access from your host system (external) or one of the other containers (internal).
@@ -96,7 +107,7 @@ For **shell access** to your containers (in this case, the `webapp` container), 
 docker exec -it webapp /bin/bash
 ```
 
-To access the other containers, replace the container name `webapp` with `webapp-frankenphp`, `mariadb` (database), or `pma` (phpMyAdmin).
+To access the other containers, replace the container name `webapp` with `mariadb` (database) or `pma` (phpMyAdmin). If you run with the experimental profile, you can also use `webapp-frankenphp`.
 
 ### Permissions Inside the `webapp` Directory
 
