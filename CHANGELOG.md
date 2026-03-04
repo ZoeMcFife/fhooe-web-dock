@@ -9,28 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Experimental [FrankenPHP](https://frankenphp.dev/) support as an alternative web server. Runs in parallel to Apache on ports 8081 (HTTP) and 7444 (HTTPS) when the containers are created with `docker compose up -d`
-- FrankenPHP: Multi-project routing so that each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; virtual routes and static files work without per-project config.
-- FrankenPHP: Directory listing for directories that exist but have no `index.php` (no greedy `php_server` fallback for those).
-- FrankenPHP: Caddyfile is generated inside the image by `src/configure-caddy.sh` at build time (no `Caddyfile` in the repo and no Caddyfile volume).
+- Experimental [FrankenPHP](https://frankenphp.dev/) support as an alternative web server. Runs in parallel to Apache on ports 8081 (HTTP) and 7444 (HTTPS) when the containers are created with `docker compose --profile experimental up -d`
+  - Multi-project routing so that each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; virtual routes and static files work without per-project config.
+  - Directory listing for directories that exist but have no `index.php` (no greedy `php_server` fallback for those).
+  - Caddyfile is generated inside the image by `src/configure-caddy.sh` at build time (no `Caddyfile` in the repo and no Caddyfile volume).
+  - `CleanReinstall` scripts ask whether FrankenPHP should be installed as an experimental feature (the default is no).
+  - Dashboard uses the correct ports (8081/7444) and directory links with a trailing slash.
+  - Dashboard can now correctly detect whether it is running on Apache or Caddy/FrankenPHP.
+
 - All external ports are configurable in the `.env` file; `compose.yaml` passes these values to the containers via environment variables.
-- `CleanReinstall` scripts now ask whether the database volume should be preserved.
+- `CleanReinstall` scripts now ask whether the database volume should be preserved ([#15](https://github.com/Digital-Media/fhooe-web-dock/issues/15)).
 
 ### Changed
 
-- FrankenPHP: Dashboard uses the correct ports (8081/7444) and directory links with a trailing slash.
 - PHP image updated to 8.5.
 - MariaDB image updated to 12.2.
-- Xdebug is installed via [PIE](https://github.com/php/pie) (PHP Installer for Extensions) instead of PECL.
+- Xdebug is installed via [PIE](https://github.com/php/pie) (PHP Installer for Extensions) instead of PECL ([#16](https://github.com/Digital-Media/fhooe-web-dock/issues/16)).
 - All apt-get installable packages from `install-cli-tools.sh` were moved into `Dockerfile-php`.
-- Dashboard: Switched from Twig to Latte 3.1.2.
-- Dashboard: Can now correctly detect if run on Apache or Caddy/FrankenPHP.
-- Database privilege script now grants permissions to the user defined in `.env` automatically.
-- Default database username changed in `.env`.
+- Dashboard: Switched from Twig to Latte 3.1.2 ([#19](https://github.com/Digital-Media/fhooe-web-dock/issues/19)).
+- The database privilege script now automatically grants permissions to the user defined in .env.
+- Default database username changed in `.env` ([#18](https://github.com/Digital-Media/fhooe-web-dock/issues/18)).
 
 ### Deprecated
 ### Removed
 ### Fixed
+
+- `CleanReinstall` scripts now detect the current working directory, so they can be called with an absolute path.
+
 ### Security
 
 ## [1.2.1] - 2025/10/20
