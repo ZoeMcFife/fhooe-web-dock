@@ -1,4 +1,7 @@
 #!/bin/bash
+# Switch to the directory where the script is located to handle absolute path calls
+cd "$(dirname "$0")" || exit
+
 export COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo "Stopping all running fhooe-web-dock containers"

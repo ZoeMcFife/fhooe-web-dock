@@ -1,4 +1,6 @@
 @echo off
+:: Switch to the directory where the script is located to handle absolute path calls
+cd /d "%~dp0"
 set COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo Stopping all running fhooe-web-dock containers
