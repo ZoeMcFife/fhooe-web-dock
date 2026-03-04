@@ -5,11 +5,11 @@ cd "$(dirname "$0")" || exit
 export COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo "Stopping all running fhooe-web-dock containers"
-docker compose stop
+docker compose --profile "*" stop
 
 echo "These containers will be deleted and recreated. You will be asked whether to preserve the database volume."
 echo ""
-docker compose ps -a
+docker compose --profile "*" ps -a
 
 while true; do
     read -p "Continue? [Y/n] " -r answer
@@ -20,7 +20,7 @@ while true; do
             break;;
         [Nn]* ) 
             echo "Containers, images and volumes are not removed. Keeping the current versions and restarting..."
-            docker compose start
+            docker compose --profile "*" start
             read -p "Press any key to exit ..."
             exit 1;;
         * ) 
@@ -39,11 +39,11 @@ while true; do
     case $dbanswer in
         [Yy]* )
             echo "Database volume will be preserved. Containers and images will be removed."
-            docker compose down --rmi all --remove-orphans
+            docker compose --profile "*" down --rmi all --remove-orphans
             break;;
         [Nn]* )
             echo "All data will be deleted, including the database volume."
-            docker compose down --rmi all --volumes --remove-orphans
+            docker compose --profile "*" down --rmi all --volumes --remove-orphans
             break;;
         * )
             echo "Please answer Y or n.";;

@@ -4,12 +4,12 @@ cd /d "%~dp0"
 set COMPOSE_PROJECT_NAME=fhooe-web-dock
 
 echo Stopping all running fhooe-web-dock containers
-docker compose stop
+docker compose --profile "*" stop
 
 echo These containers will be deleted and recreated.
 echo You will be asked whether to preserve the database volume.
 echo.
-docker compose ps -a
+docker compose --profile "*" ps -a
 
 :prompt
 set /p "answer=Continue? [Y/n] "
@@ -43,12 +43,12 @@ goto dbprompt
 
 :keepdb
 echo Database volume will be preserved. Containers and images will be removed.
-docker compose down --rmi all --remove-orphans
+docker compose --profile "*" down --rmi all --remove-orphans
 goto afterdown
 
 :removedb
 echo All data will be deleted, including the database volume.
-docker compose down --rmi all --volumes --remove-orphans
+docker compose --profile "*" down --rmi all --volumes --remove-orphans
 
 :afterdown
 echo.
@@ -87,6 +87,6 @@ exit
 :cancel
 echo Containers, images and volumes are not removed.
 echo Keeping the current versions and restarting...
-docker compose start
+docker compose --profile "*" start
 pause
 exit
