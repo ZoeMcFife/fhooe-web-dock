@@ -18,7 +18,7 @@ To use this environment, you will need to install a few tools. Some, like Docker
 - macOS: [Installation Instruction + Installer Download](https://docs.docker.com/desktop/setup/install/mac-install/) | [Homebrew](https://brew.sh/): `brew install --cask docker-desktop`
 - Linux: [Installation Instructions + Package Download](https://docs.docker.com/desktop/setup/install/linux/)
 
-To avoid rate-limit issues when downloading the underlying images from [Docker Hub](https://hub.docker.com/), please register for a [free account](https://app.docker.com/signup) and make sure you're logged in to Docker Desktop with it.
+To avoid rate-limiting issues when downloading the underlying images from [Docker Hub](https://hub.docker.com/), please register for a [free account](https://app.docker.com/signup) and make sure you're logged in to Docker Desktop with it.
 
 ### Git
 
