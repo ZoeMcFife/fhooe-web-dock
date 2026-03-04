@@ -12,25 +12,25 @@ To use this environment, you will need to install a few tools. Some, like Docker
 
 ### Docker Desktop
 
-[Docker Desktop](https://www.docker.com/products/docker-desktop/) creates and runs the *fhooe-web-dock* containers. Download and install it for Windows, macOS (M Series/Silicon or Intel) or Linux. 
+[Docker Desktop](https://www.docker.com/products/docker-desktop/) creates and runs the *fhooe-web-dock* containers. Download and install it for Windows, macOS (M Series/Silicon or Intel), or Linux. 
 
-- Windows: [Installation Instructions + Installer Download](https://docs.docker.com/desktop/setup/install/windows-install/) | [Chocolatey](https://chocolatey.org/): `choco install docker-desktop` | [WinGet](https://learn.microsoft.com/windows/package-manager/winget/): `winget install Docker.DockerDesktop`
-- macOS: [Installation Instruction + Installer Download](https://docs.docker.com/desktop/setup/install/mac-install/) | [Homebrew](https://brew.sh/): `brew install --cask docker`
+- Windows: [Installation Instructions + Installer Download](https://docs.docker.com/desktop/setup/install/windows-install/) | [WinGet](https://learn.microsoft.com/windows/package-manager/winget/): `winget install Docker.DockerDesktop`
+- macOS: [Installation Instruction + Installer Download](https://docs.docker.com/desktop/setup/install/mac-install/) | [Homebrew](https://brew.sh/): `brew install --cask docker-desktop`
 - Linux: [Installation Instructions + Package Download](https://docs.docker.com/desktop/setup/install/linux/)
 
-To avoid rate limit issues when downloading the underlying images from [Docker Hub](https://hub.docker.com/), please register for a [free account](https://hub.docker.com/signup) and make sure you're logged in on Docker Desktop with it.
+To avoid rate-limit issues when downloading the underlying images from [Docker Hub](https://hub.docker.com/), please register for a [free account](https://app.docker.com/signup) and make sure you're logged in to Docker Desktop with it.
 
 ### Git
 
-It is also recommended that you install Git on your host machine so you can easily update to the latest version of *fhooe-web-dock*.
+It is also recommended that you install Git on your host machine to easily update to the latest version of *fhooe-web-dock*.
 
-- Windows: [Installer Download](https://gitforwindows.org/) | Chocolatey: `choco install git` | WinGet: `winget install Git.Git`
+- Windows: [Installer Download](https://gitforwindows.org/) | WinGet: `winget install Git.Git`
 - macOS: Xcode Commandline Tools: `xcode-select –install` | Homebrew: `brew install git`
 - Linux: Debian/Ubuntu: `apt-get install git`
 
 ## Running the Containers
 
-Use a command prompt such as Windows PowerShell or Terminal to enter the Docker commands. All commands must be entered in your local *fhooe-web-dock* directory.
+Use a command prompt, such as Windows PowerShell or Terminal, to enter Docker commands. All commands must be entered in your local *fhooe-web-dock* directory.
 
 ### Building and Starting the Containers
 
@@ -77,14 +77,15 @@ Should your containers malfunction or you want to rebuild them from the latest o
 
 This script does the following:
 
-1. Stop all running *fhooe-web-dock* containers (`docker compose stop`).
+1. Stop all running *fhooe-web-dock* containers (`docker compose --profile "*" stop`).
 2. Ask for permission to remove the *fhooe-web-dock* containers and images.
 3. Ask whether the database volume should be preserved. If you choose to keep it, your database data will be restored after the rebuild. If you choose to delete it, you will get a completely fresh installation.
-4. If permission is granted, remove images, containers, networks, and optionally volumes (`docker compose down --rmi all [--volumes] --remove-orphans`).
-5. Remove any other dangling images belonging to *fhooe-web-dock* (`docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"`).
-6. Update *fhooe-web-dock* from GitHub (`git pull`).
-7. Build the images from scratch, ignoring cached layers (`docker compose build --no-cache`).
-8. Create and start the containers again (`docker compose up -d`). If FrankenPHP (experimental) is chosen, add `--profile experimental` to that command.
+4. If permission is granted, remove images, containers, networks, and optionally volumes (`docker compose --profile "*" down --rmi all [--volumes] --remove-orphans`).
+5. Ask whether the FrankenPHP container should be installed as an optional, experimental feature (the default is no). This enables a build with the `--profile experimental` flag.
+6. Remove any other dangling images belonging to *fhooe-web-dock* (`docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"`).
+7. Update *fhooe-web-dock* from GitHub (`git pull`).
+8. Build the images from scratch, ignoring cached layers (`docker compose [--profile experimental] build --no-cache`).
+9. Create and start the containers again (`docker compose [--profile experimental] up -d`).
 
 ## Working With the Containers
 
@@ -96,7 +97,7 @@ You can access the **web server** via HTTP or HTTPS. Be advised the HTTPS certif
 - Web server (FrankenPHP, optional): http://localhost:8081 (HTTP), https://localhost:7444 (HTTPS). Only available if you started the stack with `--profile experimental` (see above).
 - phpMyAdmin: http://localhost:8082 (HTTP), https://localhost:8443 (HTTPS)
 
-To access the **database**, you must differentiate between access from your host system (external) or one of the other containers (internal).
+To access the **database**, you must distinguish between access from your host system (external) and access from another container (internal).
 
 - External (e.g., connecting to the database from your IDE while developing): Host: `localhost`, port: `6033`
 - Internal (e.g., connecting to the database from your web application): Host: `db`, port: `3306`
@@ -111,7 +112,7 @@ To access the other containers, replace the container name `webapp` with `mariad
 
 ### Permissions Inside the `webapp` Directory
 
-`webapp` is a so-called [bind mount](https://docs.docker.com/engine/storage/bind-mounts/) that allows mapping a directory from the host system into the Docker container. On Linux/macOS hosts, permissions are synced. If your local user can access the directory, so does everything within the container. Permissions cannot be synced on Windows hosts, so permission errors in the container will likely occur at some point. Even though you can create files and directories within the `webapp` directory, the web server in the container will not be able to write files or create directories. If this is the case, you need to set permissions manually:
+`webapp` is a so-called [bind mount](https://docs.docker.com/engine/storage/bind-mounts/) that maps a directory from the host system into the Docker container. On Linux/macOS hosts, permissions are synced. If your local user can access the directory, then everything within the container can as well. Permissions cannot be synced on Windows hosts, so permission errors in the container will likely occur at some point. Even though you can create files and directories within the `webapp` directory, the web server in the container will not be able to write files or create directories. If this is the case, you need to set permissions manually:
 
 ```shell
 chmod -R 777 your/directory/within/webapp
@@ -125,4 +126,4 @@ Do you need help with *fhooe-web-dock*? Check the [wiki](https://github.com/Digi
 
 ## Thanks
 
-Thank you for starting this project [Martin](https://github.com/martinharrer). You will always be remembered.
+Thank you for starting this project, [Martin](https://github.com/martinharrer). You will always be remembered.
