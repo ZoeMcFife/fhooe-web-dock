@@ -17,7 +17,7 @@ services:
       MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
       LANG: ${LANG}
     ports:
-      - "127.0.0.1:6033:3306"
+      - "127.0.0.1:${DB_PORT_EXTERNAL:-6033}:3306"
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
     hostname: mariadb
@@ -31,15 +31,52 @@ services:
       - ./webapp:/var/www/html
     # Values for environment variables are stored in .env file
     environment:
-      DB_HOST: db:3306
+      DB_HOST: db
+      DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
+      DB_PORT: 3306
+      DB_PORT_EXTERNAL: ${DB_PORT_EXTERNAL:-6033}
       DB_NAME: ${MYSQL_DATABASE}
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
+      WEB_PORT_HTTP: ${WEB_PORT_HTTP:-8080}
+      WEB_PORT_HTTPS: ${WEB_PORT_HTTPS:-7443}
+      PMA_PORT_HTTP: ${PMA_PORT_HTTP:-8082}
+      PMA_PORT_HTTPS: ${PMA_PORT_HTTPS:-8443}
     ports:
-      - "127.0.0.1:7443:443"
-      - "127.0.0.1:8080:80"
+      - "127.0.0.1:${WEB_PORT_HTTP:-8080}:80"
+      - "127.0.0.1:${WEB_PORT_HTTPS:-7443}:443"
     restart: always
     hostname: webapp
+  # FrankenPHP (experimental): Modern PHP app server based on Caddy
+  # Runs in parallel to php-apache; use http://localhost:8081 or https://localhost:7444
+  frankenphp:
+    profiles:
+      - experimental
+    build:
+      dockerfile: Dockerfile-frankenphp
+    container_name: webapp-frankenphp
+    depends_on:
+      - db
+    volumes:
+      - ./webapp:/app/public
+    environment:
+      DB_HOST: db
+      DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
+      DB_PORT: 3306
+      DB_PORT_EXTERNAL: ${DB_PORT_EXTERNAL:-6033}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      SERVER_NAME: ":80"
+      FRANKENPHP_WEB_PORT_HTTP: ${FRANKENPHP_WEB_PORT_HTTP:-8081}
+      FRANKENPHP_WEB_PORT_HTTPS: ${FRANKENPHP_WEB_PORT_HTTPS:-7444}
+    ports:
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTP:-8081}:80"
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTPS:-7444}:443"
+      - "127.0.0.1:${FRANKENPHP_WEB_PORT_HTTPS:-7444}:443/udp"
+    restart: always
+    hostname: webapp-frankenphp
+    tty: true
   # phpMyAdmin Service
   phpmyadmin:
     build:
@@ -54,8 +91,8 @@ services:
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "127.0.0.1:8082:80"
-      - "127.0.0.1:8443:443"
+      - "127.0.0.1:${PMA_PORT_HTTP:-8082}:80"
+      - "127.0.0.1:${PMA_PORT_HTTPS:-8443}:443"
     restart: always
     hostname: pma
 

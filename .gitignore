@@ -1,6 +1,7 @@
 # Exclude everything from the webapp folder, except the dashboard
 webapp/*
 !webapp/index.php
+!webapp/favicon.ico
 !webapp/dashboard/
 
 # Exclude the JetBrains PhpStorm project directory from version control
