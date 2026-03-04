@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.3.0] - 2026/03/04
+
+### Added
+
 - Experimental [FrankenPHP](https://frankenphp.dev/) support as an alternative web server. Runs in parallel to Apache on ports 8081 (HTTP) and 7444 (HTTPS) when the containers are created with `docker compose --profile experimental up -d`
   - Multi-project routing so that each project with a `/public/index.php` (e.g. fhooe-router, Slim) is served from that folder; virtual routes and static files work without per-project config.
   - Directory listing for directories that exist but have no `index.php` (no greedy `php_server` fallback for those).
@@ -30,13 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The database privilege script now automatically grants permissions to the user defined in .env.
 - Default database username changed in `.env` ([#18](https://github.com/Digital-Media/fhooe-web-dock/issues/18)).
 
-### Deprecated
-### Removed
 ### Fixed
 
 - `CleanReinstall` scripts now detect the current working directory, so they can be called with an absolute path.
-
-### Security
 
 ## [1.2.1] - 2025/10/20
 
@@ -128,7 +138,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional tools and configuration for each container: Linux command line tools, Composer, PHP_CS, Xdebug, GitHub CLI
 - Experimental Ubuntu container for shell exercises.
 
-[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.1...HEAD
+[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.1.2...1.2.0
 [1.1.2]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.1.1...1.1.2
