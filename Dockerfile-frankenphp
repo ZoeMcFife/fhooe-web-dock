@@ -19,7 +19,8 @@ COPY src /src
 
 # Install PHP extensions (install-php-extensions is provided by the FrankenPHP base image)
 # Note: install-php-extensions cleans apt cache; run apt-get update again before our packages
-RUN apt-get update \
+RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini" \
+    && apt-get update \
     && apt-get install -y --no-install-recommends libpq-dev \
     && install-php-extensions pdo_mysql pdo_pgsql pgsql intl gd gettext xdebug zip \
     && apt-get update \
