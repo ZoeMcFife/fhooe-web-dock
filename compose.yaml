@@ -29,6 +29,7 @@ services:
       - db
     volumes:
       - ./webapp:/var/www/html
+      - ../Zoes-Hagenberg-2-Electric-Boogaloo:/app/public/projects
     # Values for environment variables are stored in .env file
     environment:
       DB_HOST: db
@@ -59,6 +60,7 @@ services:
       - db
     volumes:
       - ./webapp:/app/public
+      - ../Zoes-Hagenberg-2-Electric-Boogaloo:/app/public/projects
     environment:
       DB_HOST: db
       DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
