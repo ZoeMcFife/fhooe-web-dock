@@ -71,7 +71,20 @@ echo Remove any dangling images related to this project
 docker image prune --force --filter "label=com.docker.compose.project=%COMPOSE_PROJECT_NAME%"
 
 echo Update fhooe-web-dock from GitHub
+where git >nul 2>&1
+if errorlevel 1 (
+    echo Skipping git pull ^(git not available^).
+    echo To get updates, download the latest version from https://github.com/Digital-Media/fhooe-web-dock
+    goto afterpull
+)
+git rev-parse --git-dir >nul 2>&1
+if errorlevel 1 (
+    echo Skipping git pull ^(not a git repository^).
+    echo To get updates, download the latest version from https://github.com/Digital-Media/fhooe-web-dock
+    goto afterpull
+)
 git pull
+:afterpull
 
 echo Build the images from scratch
 docker compose %PROFILE_ARG% build --no-cache
