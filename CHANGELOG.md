@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.3.2] - 2026/03/12
+
+### Fixed
+
+- Fixed `CleanReinstall.bat` and `CleanReinstall.sh` so that they work correctly either when the *fhooe-web-dock* directory is not a git directory (e.g., when downloaded as a zip file) or when git is not available on the system. Thank you, [@oliver-krauss](https://github.com/oliver-krauss).
+
+## [1.3.1] - 2026/03/10
+
+### Fixed
+
+- Fixed the database privilege script not running under macOS since execute permissions were not set automatically. Database initialization has been moved to the image and is no longer mounted as a volume.
+
 ## [1.3.0] - 2026/03/04
 
 ### Added
@@ -138,7 +150,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional tools and configuration for each container: Linux command line tools, Composer, PHP_CS, Xdebug, GitHub CLI
 - Experimental Ubuntu container for shell exercises.
 
-[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.2...HEAD
+[1.3.2]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.1.2...1.2.0

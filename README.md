@@ -120,6 +120,14 @@ chmod -R 777 your/directory/within/webapp
 
 Be advised that 777 permissions (read/write/execute for everyone) should never be used on production systems (which *fhooe-web-dock* isn't per definition).
 
+## Troubleshooting
+
+### "Access denied" for user `dbuser` in IntelliJ (or other clients)
+
+If the connection to the database **succeeds** but you get errors like *"Access denied for user 'dbuser'@'%' to database 'DATABASENAME'"* when running SQL (e.g. `DROP DATABASE`, `CREATE DATABASE`, or using other databases), the cause is usually that the **database volume already existed** from an earlier run. Scripts in `init/` (including the one that grants `dbuser` full access) run **only when the database is first created**. If the volume was left over from a previous semester or an older setup, those scripts are skipped and `dbuser` keeps only the default privileges (e.g. only on the `default` database).
+
+**Fix:** Remove the database volume and start again so the init scripts run: `./CleanReinstall.sh` (macOS/Linux) or `CleanReinstall.bat` (Windows) and choose to **delete** the database when asked.
+
 ## Additional Information
 
 Do you need help with *fhooe-web-dock*? Check the [wiki](https://github.com/Digital-Media/fhooe-web-dock/wiki) for known solutions or open an [issue](https://github.com/Digital-Media/fhooe-web-dock/issues).

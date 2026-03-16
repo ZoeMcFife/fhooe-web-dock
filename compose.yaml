@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile-mariadb
     container_name: mariadb
     volumes:
-      - ./init:/docker-entrypoint-initdb.d
       - dbdata:/var/lib/mysql
     # Values for environment variables are stored in .env file
     environment:

@@ -11,9 +11,11 @@ LABEL maintainer="Hochleitner, Wolfgang <wolfgang.hochleitner@fh-hagenberg.at>" 
       org.opencontainers.image.title="fhooe-web-dock MariaDB" \
       org.opencontainers.image.description="MariaDB image of the fhooe-web-dock environment"
 
-# Copy additional intialization scripts to the image
+# Copy additional initialization scripts and DB init
 COPY src /src
+COPY init/01_grant_global_access.sh /docker-entrypoint-initdb.d/01_grant_global_access.sh
 
-# Run initialization scripts
+# Run initialization scripts;
 RUN chmod 755 -- /src/*.sh \
+    && chmod +x /docker-entrypoint-initdb.d/01_grant_global_access.sh \
     && /src/install-cli-tools.sh
