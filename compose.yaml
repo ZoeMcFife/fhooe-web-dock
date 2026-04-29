@@ -31,6 +31,7 @@ services:
       - ../Zoes-Hagenberg-2-Electric-Boogaloo:/app/public/projects
       - ../ue01-dxkfgbskdgbfskdgbrwsifg:/app/public/ue01-dx
       - ../ue02-dxkfgbskdgbfskdgbrwsifg:/app/public/ue02-dx
+      - ../ue03-dxkfgbskdgbfskdgbrwsifg:/app/public/ue03-dx
     # Values for environment variables are stored in .env file
     environment:
       DB_HOST: db
@@ -64,6 +65,7 @@ services:
       - ../Zoes-Hagenberg-2-Electric-Boogaloo:/app/public/projects
       - ../ue01-dxkfgbskdgbfskdgbrwsifg:/app/public/ue01-dx
       - ../ue02-dxkfgbskdgbfskdgbrwsifg:/app/public/ue02-dx
+      - ../ue03-dxkfgbskdgbfskdgbrwsifg:/app/public/ue03-dx
     environment:
       DB_HOST: db
       DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
