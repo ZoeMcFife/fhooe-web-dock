@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.3] - 2026/05/03
 
+### Added
+
+- Installed [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) v3 as a second linting/formatting option alongside PHP_CodeSniffer. A default config using the `@PER-CS` ruleset is placed at `/usr/local/etc/php-cs-fixer.php` and can be used with `php-cs-fixer fix --config /usr/local/etc/php-cs-fixer.php <path>`.
+
 ### Fixed
 
 - Fixed HTTPS support in the FrankenPHP container:
