@@ -15,14 +15,19 @@ cat << 'EOF' > "$CADDYFILE"
 
 {
     skip_install_trust
+	# Disable HTTPS redirect to allow HTTP and HTTPS simultaneously
+	auto_https disable_redirects
     frankenphp {
     }
 }
 
-:80 {
+{$SERVER_NAME} {
     # Root = Docker volume ./webapp:/app/public
     root * /app/public
     encode zstd br gzip
+	
+	# Disable HSTS
+	header -Strict-Transport-Security
 
     # 1. MULTI-APP: paths containing "/public" -> serve index.php from that same public folder
     # Group 1 (re.app.1): path up to /public (e.g. /hyp2ue-t1-examples/ue11/public)
@@ -55,6 +60,12 @@ cat << 'EOF' > "$CADDYFILE"
         php_server
         file_server
     }
+	
+	# Fix HTTP/3 port mapping
+	header Alt-Svc `h3=":{env.FRANKENPHP_WEB_PORT_HTTPS}"; ma=2592000`
 }
 EOF
-echo "Caddyfile written to $CADDYFILE"
+
+frankenphp fmt --overwrite "$CADDYFILE"
+
+echo "Caddyfile written and formatted at $CADDYFILE"
