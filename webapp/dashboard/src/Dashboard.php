@@ -263,8 +263,8 @@ class Dashboard
                 "description" => "MariaDB database.",
             ],
             [
-                "name" => "pma",
-                "description" => "phpMyAdmin for database management.",
+                "name" => "fhooe-web-dock-adminer-1",
+                "description" => "Adminer for database management.",
             ],
         ];
     }

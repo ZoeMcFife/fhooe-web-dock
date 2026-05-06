@@ -86,25 +86,17 @@ services:
     restart: always
     hostname: webapp-frankenphp
     tty: true
-  # phpMyAdmin Service
-  phpmyadmin:
-    build:
-      dockerfile: Dockerfile-phpmyadmin
-    container_name: pma
-    depends_on:
-      - db
-    # Values for environment variables are stored in .env file
+  # adminer better
+  adminer:
+    image: adminer
+    restart: always
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "127.0.0.1:${PMA_PORT_HTTP:-8082}:80"
-      - "127.0.0.1:${PMA_PORT_HTTPS:-8443}:443"
-    restart: always
-    hostname: pma
-
+      - "8082:8080"
 networks:
   default:
     name: webnet
