@@ -34,6 +34,8 @@ services:
       - ../ue03-dxkfgbskdgbfskdgbrwsifg:/app/public/ue03-dx
       - ../ue04-dxkfgbskdgbfskdgbrwsifg:/app/public/ue04-dx
       - ../ue05-dxkfgbskdgbfskdgbrwsifg:/app/public/ue05-dx
+      - ../ue06-dxkfgbskdgbfskdgbrwsifg:/app/public/ue06-dx
+
     # Values for environment variables are stored in .env file
     environment:
       DB_HOST: db
@@ -70,6 +72,7 @@ services:
       - ../ue03-dxkfgbskdgbfskdgbrwsifg:/app/public/ue03-dx
       - ../ue04-dxkfgbskdgbfskdgbrwsifg:/app/public/ue04-dx
       - ../ue05-dxkfgbskdgbfskdgbrwsifg:/app/public/ue05-dx
+      - ../ue06-dxkfgbskdgbfskdgbrwsifg:/app/public/ue06-dx
     environment:
       DB_HOST: db
       DB_HOST_EXTERNAL: ${DB_HOST_EXTERNAL:-localhost}
