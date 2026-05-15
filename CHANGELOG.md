@@ -19,6 +19,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.3.3] - 2026/05/03
+
+### Added
+
+- Installed [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) v3 as a second linting/formatting option alongside PHP_CodeSniffer. A default config using the `@PER-CS` ruleset is placed at `/usr/local/etc/php-cs-fixer.php` and can be used with `php-cs-fixer fix --config /usr/local/etc/php-cs-fixer.php <path>`.
+
+### Fixed
+
+- Fixed HTTPS support in the FrankenPHP container:
+  - `SERVER_NAME` in `compose.yaml` now specifies both HTTP (`:80`) and HTTPS (`localhost`) so Caddy serves both protocols simultaneously.
+  - Added `auto_https disable_redirects` to the Caddyfile global block to prevent automatic HTTP→HTTPS redirects.
+  - Added `header -Strict-Transport-Security` to disable HSTS on FrankenPHP responses.
+  - `{$SERVER_NAME}` is now used as the Caddyfile site address instead of the hardcoded `:80`, so the value from the environment variable is respected.
+  - The `Alt-Svc` header for HTTP/3 advertisement now uses `{env.FRANKENPHP_WEB_PORT_HTTPS}` instead of a hardcoded port so it stays correct when the port is changed in `.env`.
+  - Caddyfile is formatted with `frankenphp fmt` after being written.
+
 ## [1.3.2] - 2026/03/12
 
 ### Fixed
@@ -150,7 +166,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional tools and configuration for each container: Linux command line tools, Composer, PHP_CS, Xdebug, GitHub CLI
 - Experimental Ubuntu container for shell exercises.
 
-[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.2...HEAD
+[Unreleased]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.3...HEAD
+[1.3.3]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/Digital-Media/fhooe-web-dock/compare/1.2.1...1.3.0

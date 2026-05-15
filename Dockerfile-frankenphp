@@ -49,4 +49,4 @@ RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini" \
 ENV LC_ALL=en_US.utf8 \
     LANG=en_US.utf8 \
     LANGUAGE=en_US.utf8 \
-    SERVER_NAME=":80"
+    SERVER_NAME="localhost"
